@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang = "en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Pong</title>
+    </head>
+    <body>
+        <script>
+        
+        var WIDTH=700, HEIGHT=600, pi=Math.PI;
+        var canvas, ctx, keystate;
+        var player, ai, ball;
+
+        player = {
+            x: null, 
+            y: null,
+            width: 20, 
+            height: 100, 
+
+            update: function() {},
+            draw: function() {
+                ctx.fillRect(this.x, this.y, this.width, this.height);
+            }
+        };
+
+        ai = {
+            x: null, 
+            y: null,
+            width: 20, 
+            height: 100, 
+
+            update: function() {},
+            draw: function() {
+                ctx.fillRect(this.x, this.y, this.width, this.height);
+            }
+        };
+
+        ball = {
+            x: null, 
+            y: null,
+            side: 20,  
+
+            update: function() {},
+            draw: function() {
+                ctx.fillRect(this.x, this.y, this.side, this.side);
+            }
+        };
+
+
+        function main() {
+
+            canvas = document.createElement("canvas");
+            canvas.width = WIDTH;
+            canvas.height = HEIGHT;
+            ctx = canvas.getContext("2d");
+            document.body.appendChild(canvas);
+
+            init();
+
+            var loop = function() {
+                update();
+                draw();
+
+                window.requestAnimationFrame(loop, canvas);
+            };
+            window.requestAnimationFrame(loop, canvas);
+
+
+        }
+
+        function init() {
+
+            player.x = player.width;
+            player.y = (HEIGHT - player.height) / 2;
+
+            ai.x = WIDTH - (player.width + ai.width);
+            ai.y = (HEIGHT - ai.height) / 2;
+
+            ball.x = (WIDTH - ball.side) / 2;
+            ball.y = (HEIGHT - ball.side) / 2;
+        }
+
+        function update()  {
+            ball.update();
+            player.update();
+            ai.update();
+        }
+
+        function draw() {
+            //draws a black square as a background
+            ctx.fillRect(0, 0, WIDTH, HEIGHT);
+
+            //saves the current color state as black
+            ctx.save();
+            //changes the color to white to draw the ai/player/ball
+            ctx.fillStyle = "#fff";
+
+
+            ball.draw();
+            player.draw();
+            ai.draw();
+            dashLine();
+            
+            //changes the color back to black to redraw the background
+            ctx.restore();
+        }
+
+
+        //creates a dashed line down the middle of the screen
+        function dashLine() {
+            //how wide the dashes are 
+            var w = 4;
+            var x = (WIDTH - w) * 0.5;
+            var y = 0;
+            //controls how many dash lines there are
+            var step = HEIGHT / 15;
+
+            while (y < HEIGHT) {
+                ctx.fillRect(x, y + step * 0.25 , w, step*0.5);
+                y += step;
+            }
+        }
+
+        main();
+
+
+        </script>
+
+    </body>
+    </html>
