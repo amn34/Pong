@@ -3,11 +3,23 @@
     <head>
         <meta charset="UTF-8">
         <title>Pong</title>
+        <style>    
+        /* centers the canvas */
+        canvas {
+            position: absolute; 
+            margin: auto;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+        </style>
     </head>
     <body>
         <script>
         
         var WIDTH=700, HEIGHT=600, pi=Math.PI;
+        var UpArrow=38, DownArrow=40;
         var canvas, ctx, keystate;
         var player, ai, ball;
 
@@ -17,7 +29,12 @@
             width: 20, 
             height: 100, 
 
-            update: function() {},
+            update: function() {
+                //if uparrow is pressed move up 7 pixels
+                if(keystate[UpArrow]) this.y -= 7;
+                //if downarrow is pressed move up 7 pixels
+                if(keystate[DownArrow]) this.y += 7;
+            },
             draw: function() {
                 ctx.fillRect(this.x, this.y, this.width, this.height);
             }
@@ -38,9 +55,37 @@
         ball = {
             x: null, 
             y: null,
-            side: 20,  
+            //velocity
+            vel: null,
+            //size of the side
+            side: 20, 
+            speed: 5,
 
-            update: function() {},
+
+            update: function() {
+                this.x += this.vel.x;
+                this.y += this.vel.y;
+
+                //if the ball hits the top then make it bounce
+                if(0 > this.y || this.y + this.side > HEIGHT) {
+
+                    //this makes the ball have an 
+                    //elastic collision with the ball and keeps it from 
+                    //going out of  bounds
+
+                    //idk how this works
+                    var offset = this.y < 0 ? 0 - this.y : HEIGHT - (this.y + this.side);
+                    this.y += 2 * offset;
+
+                    //makes the ball bounce 
+                    this.vel.y *= -1;
+                };
+
+                if(0 > this.x || this.x + this.side > WIDTH) {
+                    //if the ball hits the side, destroy it and reset
+                    this.side = 0;
+                }
+            },
             draw: function() {
                 ctx.fillRect(this.x, this.y, this.side, this.side);
             }
@@ -48,12 +93,21 @@
 
 
         function main() {
+            
 
             canvas = document.createElement("canvas");
             canvas.width = WIDTH;
             canvas.height = HEIGHT;
             ctx = canvas.getContext("2d");
             document.body.appendChild(canvas);
+
+            keystate = {};
+            document.addEventListener("keydown", function(evt) {
+                keystate[evt.keyCode] = true;
+            });
+            document.addEventListener("keyup", function(evt) {
+                delete keystate[evt.keyCode];
+            });
 
             init();
 
@@ -78,6 +132,10 @@
 
             ball.x = (WIDTH - ball.side) / 2;
             ball.y = (HEIGHT - ball.side) / 2;
+            ball.vel = {
+                x: ball.speed, 
+                y: 0
+            }
         }
 
         function update()  {
@@ -96,12 +154,15 @@
             ctx.fillStyle = "#fff";
 
 
+            //calls the draw function each of these objects have
             ball.draw();
             player.draw();
             ai.draw();
+
+            //draws the dash line in the middle of the play area
             dashLine();
             
-            //changes the color back to black to redraw the background
+            //changes the color back to black
             ctx.restore();
         }
 
