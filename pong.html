@@ -81,10 +81,21 @@
                     this.vel.y *= -1;
                 };
 
-                if(0 > this.x || this.x + this.side > WIDTH) {
-                    //if the ball hits the side, destroy it and reset
-                    this.side = 0;
-                }
+
+                var AABBIntersect = function(ax, ay, aw, ah, bx, by, bw, bh) {
+                    return ax<bx+bw && ay<by+bh && bx<ax+aw && by<ay+ah;
+                };
+
+                var paddle = this.vel.x < 0 ? player: ai;
+                if(AABBIntersect(paddle.x, paddle.y, paddle.width, paddle.height,
+                        this.x, this.y, this.side, this.side)) {
+                  
+                            var n = (this.y + this.side - paddle.y) / (paddle.height + this.side);
+                            var angle = 0.25 * pi * (2*n - 1); //pi/4 = 45deg when hit at the top of the paddle
+                            this.vel.x = (paddle===player ? 1 : -1) * this.speed * Math.cos(angle);
+                            this.vel.y = this.speed * Math.sin(angle);
+                    }
+
             },
             draw: function() {
                 ctx.fillRect(this.x, this.y, this.side, this.side);
