@@ -3,6 +3,7 @@
         var UpArrow=38, DownArrow=40;
         var canvas, ctx, keystate;
         var player, ai, ball;
+        var audio = new Audio("bonk.mp3");
 
         player = {
             x: null, 
@@ -27,7 +28,13 @@
             width: 20, 
             height: 100, 
 
-            update: function() {},
+            update: function() {
+                if(ball.y < this.y) {
+                    this.y -= 3;
+                } else {
+                    this.y += 3;
+                }
+            },
             draw: function() {
                 ctx.fillRect(this.x, this.y, this.width, this.height);
             }
@@ -60,6 +67,7 @@
 
                     //makes the ball bounce 
                     this.vel.y *= -1;
+                    audio.play();
                 };
 
 
@@ -75,6 +83,7 @@
                             var angle = 0.25 * pi * (2*n - 1); //pi/4 = 45deg when hit at the top of the paddle
                             this.vel.x = (paddle===player ? 1 : -1) * this.speed * Math.cos(angle);
                             this.vel.y = this.speed * Math.sin(angle);
+                            audio.play();
                     }
 
             },
