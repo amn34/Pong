@@ -28,12 +28,11 @@
             width: 20, 
             height: 100, 
 
+            //moves the ai player towards the ball 
             update: function() {
-                if(ball.y < this.y) {
-                    this.y -= 3;
-                } else {
-                    this.y += 3;
-                }
+
+                var dest = ball.y - (this.height - ball.side)*0.5;
+                this.y += (dest - this.y) * 0.1;
             },
             draw: function() {
                 ctx.fillRect(this.x, this.y, this.width, this.height);
@@ -47,7 +46,7 @@
             vel: null,
             //size of the side
             side: 20, 
-            speed: 5,
+            speed: 10,
 
 
             update: function() {
